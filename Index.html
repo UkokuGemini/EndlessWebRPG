@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>无尽征程 RPG - Ver.2.6.1</title>
+    <title>无尽征程 RPG - Ver.2.6.2</title>
     <link rel="stylesheet" href="game-styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <div class="progress-bar" id="progress-bar"></div>
         <div class="game-header">
             <h1 class="game-title">无尽征程 RPG
-                <div class="version">Ver.2.6.1</div>
+                <div class="version">Ver.2.6.2</div>
             </h1>
         </div>
         <div class="player-panel">
@@ -177,7 +177,7 @@
             currentLevel: 1,
             enemyHealth: 50,
             enemyMaxHealth: 50,
-            enemyAttack: 8,
+            enemyAttack: 8, enemyDefense: 0, 
             enemyName: "哥布林战士",
             battleActive: false,
             merchantOpen: false,
@@ -333,7 +333,6 @@
             
             return stats;
         }
-
         // 初始化UI
         function initUI() {
             updateStats();
@@ -473,7 +472,11 @@
             // 普通攻击
             if (!usedSkill) {
                 const playerAttack = gameState.baseAttack + (gameState.weapon ? gameState.weapon.attack : 0);
-                let playerDamage = Math.max(1, playerAttack - Math.floor(Math.random() * 3));
+                // 基础伤害 = 玩家攻击力 * (1 - 防御减伤比例)
+                // 防御减伤比例 = 敌人防御 / (敌人防御 + 100)
+                const defenseReduction = gameState.enemyDefense / (gameState.enemyDefense + 100);
+                let baseDamage = Math.max(1, playerAttack * (1 - defenseReduction));
+                let playerDamage = Math.floor(Math.max(1, baseDamage + Math.floor(Math.random() * 6) - 3));
                 
                 if (Math.random() < 0.15) {
                     playerDamage = Math.floor(playerDamage * 1.5);
@@ -516,8 +519,8 @@
             
             setTimeout(battleLoop, 1000);
         }
- function AutoEquip(item) {
-     if (gameState.inventory.length < gameState.maxInventorySize) {
+        function AutoEquip(item) {
+            if (gameState.inventory.length < gameState.maxInventorySize) {
                     gameState.inventory.push(item);
                     addLogMessage("系统", `获得了${item.name}！`, 'loot');
                     // 自动装备更好的装备
@@ -597,15 +600,30 @@
   "堕落天使", "深渊触手", "沙暴蝎王", "森林树精", "诅咒木乃伊",
   "机械傀儡", "暗影狼人", "瘟疫使者", "雷霆狮鹫", "深渊海妖"];
             gameState.enemyName = enemyNames[Math.floor(Math.random() * enemyNames.length)];
-            gameState.enemyMaxHealth = Math.round(40 + gameState.currentLevel * 15 * Math.pow(1.1, gameState.currentLevel));
-            gameState.enemyHealth = gameState.enemyMaxHealth;
-            gameState.enemyAttack = Math.round(5 + gameState.currentLevel * 2 * Math.pow(1.08, gameState.currentLevel));
-            
+            // 血量计算公式保持不变
+    gameState.enemyMaxHealth = Math.round(40 + gameState.currentLevel * 15 * Math.pow(1.1, gameState.currentLevel));
+    gameState.enemyHealth = gameState.enemyMaxHealth;
+    
+    // 攻击力计算公式保持不变
+    gameState.enemyAttack = Math.round(5 + gameState.currentLevel * 2 * Math.pow(1.08, gameState.currentLevel));
+    
+    // 新的防御力计算公式（非线性）
+    // 基础防御 = 攻击力的平方根 * 0.5 + 血量的立方根 * 0.3
+    const baseDefense = Math.sqrt(gameState.enemyAttack) * 0.5 + Math.cbrt(gameState.enemyMaxHealth) * 0.3;
+    
+    // 等级加成 = 当前关卡数的自然对数 * 2
+    const levelBonus = Math.log(gameState.currentLevel + 1) * 2;
+    
+    // 最终防御 = 基础防御 + 等级加成，四舍五入取整
+    gameState.enemyDefense = Math.round(baseDefense + levelBonus);
+
+    // 确保防御力不低于1
+    gameState.enemyDefense = Math.max(1, gameState.enemyDefense);
             elements.enemyName.textContent = gameState.enemyName;
             updateEnemyHealth();
             
             addLogMessage("系统", `新的敌人出现了：${gameState.enemyName}！`, 'system');
-            addLogMessage("系统", `敌人生命值：${gameState.enemyMaxHealth}，攻击力：${gameState.enemyAttack}`, 'system');
+            addLogMessage("系统", `敌人生命值：${gameState.enemyMaxHealth}，攻击力：${gameState.enemyAttack}，防御力：${gameState.enemyDefense}`, 'system');
         }
 
         // 玩家死亡
@@ -728,21 +746,35 @@
         }
 
         // 升级
+        // 修改levelUp函数，实现非线性成长
         function levelUp() {
-            gameState.level++;
-            gameState.exp -= gameState.maxExp;
-            gameState.maxExp = Math.floor(gameState.maxExp * 1.5);
-            gameState.maxHealth += 20;
-            gameState.health = gameState.maxHealth;
-            gameState.maxMana += 10;
-            gameState.mana = gameState.maxMana;
-            gameState.baseAttack += 3;
-            gameState.baseDefense += 2;
-            
-            addLogMessage("系统", `恭喜！你升到了${gameState.level}级！`, 'system');
-            updateStats();
-        }
-
+    gameState.level++;
+    gameState.exp -= gameState.maxExp;
+    
+    // 经验需求增长（非线性）
+    gameState.maxExp = Math.floor(gameState.maxExp * (1.4 + gameState.level * 0.02));
+    
+    // 血量成长（基础值+等级平方系数）
+    const healthGain = 20 + Math.floor(Math.sqrt(gameState.level) * 3);
+    gameState.maxHealth += healthGain;
+    gameState.health = gameState.maxHealth;
+    
+    // 魔法值成长（基础值+等级对数系数）
+    const manaGain = 10 + Math.floor(Math.log(gameState.level + 1) * 5);
+    gameState.maxMana += manaGain;
+    gameState.mana = gameState.maxMana;
+    
+    // 攻击力成长（基础值+等级曲线）
+    const attackGain = 3 + Math.floor(gameState.level / 5);
+    gameState.baseAttack += attackGain;
+    
+    // 防御力成长（基础值+等级曲线）
+    const defenseGain = 2 + Math.floor(gameState.level / 7);
+    gameState.baseDefense += defenseGain;
+    
+    addLogMessage("系统", `恭喜！你升到了${gameState.level}级！`, 'system');
+    updateStats();
+}
         // 下一关
         function nextLevel() {
             gameState.currentLevel++;
