@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>无尽征程 RPG - Ver.2.6.1</title>
+    <link rel="stylesheet" href="game-styles.css">
+</head>
+<body>
+    <div class="game-container" id="game-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="game-header">
+            <h1 class="game-title">无尽征程 RPG
+                <div class="version">Ver.2.6.1</div>
+            </h1>
+        </div>
+        <div class="player-panel">
+            <div class="stat-bar">
+                <div class="stat-label">生命值(<span id="health-value">100/100</span>):</div>
+                <div class="stat-value">
+                    <div class="bar-container">
+                        <div class="health-fill" id="health-bar" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">魔法值(<span id="mana-value">50/50</span>):</div>
+                <div class="stat-value">
+                    <div class="bar-container">
+                        <div class="mana-fill" id="mana-bar" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-bar">
+                <div class="stat-label">经验值(<span id="exp-value">0/100</span>):</div>
+                <div class="stat-value">
+                    <div class="bar-container">
+                        <div class="exp-fill" id="exp-bar" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-pair">
+                    <div class="stat-label">等级:</div>
+                    <div class="stat-value" id="level">1</div>
+                </div>
+                <div class="stat-pair">
+                    <div class="stat-label">金钱:</div>
+                    <div class="stat-value gold-stat" id="money">0</div>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-pair">
+                    <div class="stat-label">攻击力:</div>
+                    <div class="stat-value" id="attack">10</div>
+                </div>
+                <div class="stat-pair">
+                    <div class="stat-label">防御力:</div>
+                    <div class="stat-value" id="defense">5</div>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-pair">
+                    <div class="stat-label">火球术:</div>
+                    <div class="stat-value" id="fireball-skill">Lv.0</div>
+                </div>
+                <div class="stat-pair">
+                    <div class="stat-label">治疗术:</div>
+                    <div class="stat-value" id="heal-skill">Lv.0</div>
+                </div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-pair">
+                    <div class="stat-label">生命药水:</div>
+                    <div class="stat-value" id="health-potion">0</div>
+                </div>
+                <div class="stat-pair">
+                    <div class="stat-label">魔法药水:</div>
+                    <div class="stat-value" id="mana-potion">0</div>
+                </div>
+            </div>
+            <div class="equipment-info">
+                <div class="equipment-item">
+                    <div class="equipment-label">武器</div>
+                    <div class="equipment-value" id="weapon">无</div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-label">护甲</div>
+                    <div class="equipment-value" id="armor">无</div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-label">首饰</div>
+                    <div class="equipment-value" id="accessory">无</div>
+                </div>
+            </div>
+            <button class="inventory-btn" id="inventory-btn">背包</button>
+            <div class="inventory-panel" id="inventory-panel">
+                <div class="inventory-title">
+                    <span>背包</span>
+                    <span id="inventory-count">0/10</span>
+                </div>
+                <div class="inventory-items" id="inventory"></div>
+                <button class="sell-all-btn" id="sell-all-btn">出售所有未装备物品</button>
+            </div>
+            <button class="merchant-btn" id="merchant-btn">商人</button>
+            <div class="merchant-panel" id="merchant-panel">
+                <div class="merchant-item">
+                    <div class="merchant-item-name">治疗药水 (+50HP)</div>
+                    <div class="merchant-item-price">20 金币</div>
+                    <button class="merchant-item-btn" data-item="health_potion" data-price="20" data-effect="50">购买</button>
+                </div>
+                <div class="merchant-item">
+                    <div class="merchant-item-name">魔法药水 (+50MP)</div>
+                    <div class="merchant-item-price">15 金币</div>
+                    <button class="merchant-item-btn" data-item="mana_potion" data-price="15" data-effect="50">购买</button>
+                </div>
+                <div class="merchant-item">
+                    <div class="merchant-item-name">火球术卷轴</div>
+                    <div class="merchant-item-price">50 金币</div>
+                    <button class="merchant-item-btn" data-item="fireball_scroll" data-price="50">购买</button>
+                </div>
+                <div class="merchant-item">
+                    <div class="merchant-item-name">治疗术卷轴</div>
+                    <div class="merchant-item-price">50 金币</div>
+                    <button class="merchant-item-btn" data-item="heal_scroll" data-price="50">购买</button>
+                </div>
+                <div class="merchant-item">
+                    <div class="merchant-item-name">随机装备</div>
+                    <div class="merchant-item-price">50 金币</div>
+                    <button class="merchant-item-btn" data-item="random_equipment" data-price="50">购买</button>
+                </div>
+                <div class="merchant-item">
+                    <div class="merchant-item-name">跑商</div>
+                    <div class="merchant-item-price" id="trade-cooldown-text">可以跑商</div>
+                    <button class="trade-btn" id="trade-btn">跑商</button>
+                </div>
+                <div class="cooldown-info" id="trade-cooldown"></div>
+            </div>
+            <button class="revive-btn" id="revive-btn" style="display:none;">复活(丢失随机金钱和装备)</button>
+        </div>
+        <div class="battle-panel">
+            <div class="level-info">
+                <div class="level-text">当前关卡: <span id="current-level">1</span></div>
+                <div class="revive-count">死亡次数: <span id="revive-count">0</span></div>
+            </div>
+            <div class="enemy-info">
+                <div class="enemy-name" id="enemy-name">哥布林战士</div>
+                <div class="enemy-health">
+                    <div class="enemy-health-bar">
+                        <div class="enemy-health-fill" id="enemy-health-bar" style="width:100%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="battle-controls">
+                <button class="heal-btn" id="heal-btn">生命药水</button>
+                <button class="mana-btn" id="mana-btn">魔法药水</button>
+                <button class="battle-btn" id="battle-btn">战斗</button>
+            </div>
+            <div class="battle-log" id="battle-log">
+                <div class="battle-message system-message">欢迎来到无尽征程！点击"战斗"开始你的冒险！</div>
+                <div class="battle-message system-message">击败敌人获得金币和经验值，提升等级并获取更强大的装备！</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const gameState = {
+            health: 100,
+            maxHealth: 100,
+            mana: 50,
+            maxMana: 50,
+            exp: 0,
+            maxExp: 100,
+            level: 1,
+            baseAttack: 10,
+            baseDefense: 5,
+            money: 0,
+            currentLevel: 1,
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyName: "哥布林战士",
+            battleActive: false,
+            merchantOpen: false,
+            inventoryOpen: false,
+            healthPotions: 0,
+            manaPotions: 0,
+            fireballLevel: 0,
+            healLevel: 0,
+            lastTradeTime: 0,
+            tradeCooldown: 300000,
+            defeatedEnemy: false,
+            weapon: null,
+            armor: null,
+            accessory: null,
+            inventory: [],
+            maxInventorySize: 10,
+            tradeTimer: null,
+            reviveCount: 0
+        };
+
+        const equipmentNames = {
+            weapon: {
+                prefixes: ["锋利的","淬毒的","附魔的","燃烧的","冰霜的","雷电的","暗影的","神圣的","暴怒的","精准的","嗜血的","剧毒的","诅咒的","光明的","暗黑的"],
+                names: ["长剑","战斧","法杖","匕首","弓箭","巨锤","双刃","长矛","短剑","巨剑","弯刀","战锤","权杖","镰刀","拳套"],
+                suffixes: ["毁灭者","征服者","守护者","审判者","撕裂者","穿刺者","屠戮者","终结者","制裁者","暴君","王者","霸主","勇士","战神","魔王"]
+            },
+            armor: {
+                prefixes: ["坚固的","轻便的","附魔的","神圣的","暗影的","龙鳞","钢铁","魔法","符文","远古","传奇","不朽","永恒","神圣","恶魔"],
+                names: ["板甲","锁甲","皮甲","布甲","鳞甲","骨甲","头盔","胸甲","护腿","护手","护肩","腰带","靴子","盾牌","披风"],
+                suffixes: ["守护","壁垒","庇护","卫士","坚毅","不屈","防御","抵抗","保护","勇气","荣耀","信仰","意志","灵魂","生命"]
+            },
+            accessory: {
+                prefixes: ["魔法的","神圣的","暗影的","元素的","生命的","守护的","智慧的","力量的","敏捷的","耐力的","幸运的","诅咒的","光明的","黑暗的","神秘的"],
+                names: ["戒指","项链","护符","徽章","勋章","宝石","耳环","手镯","脚镯","头饰","腰带扣","护身符","吊坠","胸针","袖扣"],
+                suffixes: ["庇护","智慧","力量","魔力","生命","守护","敏捷","耐力","幸运","诅咒","光明","黑暗","神秘","元素","灵魂"]
+            }
+        };
+
+        // 稀有度权重
+        const rarityWeights = {
+            common: 50,
+            uncommon: 30,
+            rare: 15,
+            epic: 4,
+            legendary: 1
+        };
+
+        // 稀有度属性乘数
+        const rarityMultipliers = {
+            common: { min: 0.5, max: 1.0, price: 1.0 },
+            uncommon: { min: 0.8, max: 1.3, price: 1.5 },
+            rare: { min: 1.2, max: 1.8, price: 2.0 },
+            epic: { min: 1.6, max: 2.2, price: 3.0 },
+            legendary: { min: 2.0, max: 3.0, price: 5.0 }
+        };
+
+        // 元素引用
+        const elements = {
+            healthBar: document.getElementById('health-bar'),
+            manaBar: document.getElementById('mana-bar'),
+            expBar: document.getElementById('exp-bar'),
+            level: document.getElementById('level'),
+            attack: document.getElementById('attack'),
+            defense: document.getElementById('defense'),
+            money: document.getElementById('money'),
+            currentLevel: document.getElementById('current-level'),
+            enemyName: document.getElementById('enemy-name'),
+            enemyHealthBar: document.getElementById('enemy-health-bar'),
+            battleLog: document.getElementById('battle-log'),
+            battleBtn: document.getElementById('battle-btn'),
+            healBtn: document.getElementById('heal-btn'),
+            manaBtn: document.getElementById('mana-btn'),
+            merchantBtn: document.getElementById('merchant-btn'),
+            merchantPanel: document.getElementById('merchant-panel'),
+            reviveBtn: document.getElementById('revive-btn'),
+            healthPotion: document.getElementById('health-potion'),
+            manaPotion: document.getElementById('mana-potion'),
+            fireballSkill: document.getElementById('fireball-skill'),
+            healSkill: document.getElementById('heal-skill'),
+            progressBar: document.getElementById('progress-bar'),
+            tradeBtn: document.getElementById('trade-btn'),
+            tradeCooldown: document.getElementById('trade-cooldown'),
+            tradeCooldownText: document.getElementById('trade-cooldown-text'),
+            weapon: document.getElementById('weapon'),
+            armor: document.getElementById('armor'),
+            accessory: document.getElementById('accessory'),
+            inventory: document.getElementById('inventory'),
+            inventoryCount: document.getElementById('inventory-count'),
+            sellAllBtn: document.getElementById('sell-all-btn'),
+            healthValue: document.getElementById('health-value'),
+            manaValue: document.getElementById('mana-value'),
+            expValue: document.getElementById('exp-value'),
+            inventoryBtn: document.getElementById('inventory-btn'),
+            inventoryPanel: document.getElementById('inventory-panel'),
+            reviveCount: document.getElementById('revive-count')
+        };
+
+        // 生成装备名称
+        function generateEquipmentName(type) {
+            const prefixes = equipmentNames[type].prefixes;
+            const names = equipmentNames[type].names;
+            const suffixes = equipmentNames[type].suffixes;
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const name = names[Math.floor(Math.random() * names.length)];
+            const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+            return `${prefix}${name}${suffix}`;
+        }
+
+        // 根据权重随机选择稀有度
+        function getRandomRarity() {
+            const totalWeight = Object.values(rarityWeights).reduce((sum, weight) => sum + weight, 0);
+            let random = Math.random() * totalWeight;
+            
+            for (const [rarity, weight] of Object.entries(rarityWeights)) {
+                random -= weight;
+                if (random <= 0) return rarity;
+            }
+            
+            return "common";
+        }
+
+        // 生成随机装备属性
+        function generateRandomEquipmentStats(type, playerLevel) {
+            const rarity = getRandomRarity();
+            const multiplier = rarityMultipliers[rarity];
+            
+            let stats = {};
+            const baseValue = Math.floor((playerLevel+1) * (multiplier.min + Math.random() * (multiplier.max - multiplier.min)));
+            
+            switch(type) {
+                case 'weapon':
+                    stats = {
+                        attack: Math.floor(Math.max(1, baseValue * (1+Math.random()) * 5)),
+                        price: Math.floor(30 * multiplier.price),
+                        rarity: rarity
+                    };
+                    break;
+                case 'armor':
+                    stats = {
+                        defense: Math.floor(Math.max(1, baseValue * (1+Math.random()) * 3)),
+                        price: Math.floor(25 * multiplier.price),
+                        rarity: rarity
+                    };
+                    break;
+                case 'accessory':
+                    stats = {
+                        manaBonus: Math.floor(Math.max(5, baseValue * (1+Math.random()) * 10)),
+                        price: Math.floor(20 * multiplier.price),
+                        rarity: rarity
+                    };
+                    break;
+            }
+            
+            return stats;
+        }
+
+        // 初始化UI
+        function initUI() {
+            updateStats();
+            elements.enemyName.textContent = gameState.enemyName;
+            updateEnemyHealth();
+            updateInventory();
+            
+            elements.battleBtn.addEventListener('click', startBattle);
+            elements.healBtn.addEventListener('click', useHealthPotion);
+            elements.manaBtn.addEventListener('click', useManaPotion);
+            elements.merchantBtn.addEventListener('click', toggleMerchant);
+            elements.inventoryBtn.addEventListener('click', toggleInventory);
+            elements.reviveBtn.addEventListener('click', revivePlayer);
+            elements.tradeBtn.addEventListener('click', trade);
+            elements.sellAllBtn.addEventListener('click', sellUnusedItems);
+            
+            document.querySelectorAll('.merchant-item-btn').forEach(btn => {
+                if (btn.id !== 'trade-btn') {
+                    btn.addEventListener('click', () => {
+                        const item = btn.dataset.item;
+                        const price = parseInt(btn.dataset.price);
+                        buyItem(item, price);
+                    });
+                }
+            });
+            
+            addLogMessage("系统", "准备好开始冒险了吗？点击战斗开始吧！", "system");
+            startTradeTimer();
+        }
+
+        // 开始跑商计时器
+        function startTradeTimer() {
+            if (gameState.tradeTimer) {
+                clearInterval(gameState.tradeTimer);
+            }
+            gameState.tradeTimer = setInterval(updateTradeCooldown, 1000);
+        }
+
+        // 更新状态
+        function updateStats() {
+            elements.healthBar.style.width = `${(gameState.health / gameState.maxHealth) * 100}%`;
+            elements.manaBar.style.width = `${(gameState.mana / gameState.maxMana) * 100}%`;
+            elements.expBar.style.width = `${(gameState.exp / gameState.maxExp) * 100}%`;
+            elements.level.textContent = gameState.level;
+            elements.healthValue.textContent = `${gameState.health}/${gameState.maxHealth}`;
+            elements.manaValue.textContent = `${gameState.mana}/${gameState.maxMana}`;
+            elements.expValue.textContent = `${gameState.exp}/${gameState.maxExp}`;
+            
+            const totalAttack = gameState.baseAttack + (gameState.weapon ? gameState.weapon.attack : 0);
+            const totalDefense = gameState.baseDefense + (gameState.armor ? gameState.armor.defense : 0);
+            
+            elements.attack.textContent = totalAttack;
+            elements.defense.textContent = totalDefense;
+            elements.money.textContent = gameState.money;
+            elements.currentLevel.textContent = gameState.currentLevel;
+            elements.healthPotion.textContent = gameState.healthPotions;
+            elements.manaPotion.textContent = gameState.manaPotions;
+            elements.fireballSkill.textContent = `Lv.${gameState.fireballLevel}`;
+            elements.healSkill.textContent = `Lv.${gameState.healLevel}`;
+            elements.weapon.textContent = gameState.weapon ? `${gameState.weapon.name}(+${gameState.weapon.attack}攻)` : "无";
+            elements.armor.textContent = gameState.armor ? `${gameState.armor.name}(+${gameState.armor.defense}防)` : "无";
+            elements.accessory.textContent = gameState.accessory ? `${gameState.accessory.name}(+${gameState.accessory.manaBonus}魔)` : "无";
+            elements.reviveCount.textContent = gameState.reviveCount;
+        }
+
+        // 更新敌人生命值
+        function updateEnemyHealth() {
+            elements.enemyHealthBar.style.width = `${(gameState.enemyHealth / gameState.enemyMaxHealth) * 100}%`;
+        }
+
+        // 添加日志消息
+        function addLogMessage(sender, message, type) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('battle-message', `${type}-message`);
+            messageElement.textContent = `[${sender}]: ${message}`;
+            elements.battleLog.appendChild(messageElement);
+            
+            // 显示50条消息
+            const messages = elements.battleLog.querySelectorAll('.battle-message');
+            if (messages.length > 50) {
+                for (let i = 0; i < messages.length - 50; i++) {
+                    messages[i].style.display = 'none';
+                }
+            }
+            elements.battleLog.scrollTop = elements.battleLog.scrollHeight;
+        }
+
+        // 开始战斗
+        function startBattle() {
+            if (gameState.battleActive) return;
+            if (gameState.defeatedEnemy) {
+                addLogMessage("系统", "请先进入下一关！", "system");
+                return;
+            }
+            if (gameState.health <= 0) {
+                addLogMessage("系统", "你已死亡，请先复活！", "system");
+                return;
+            }
+            
+            gameState.battleActive = true;
+            elements.battleBtn.textContent = "战斗中...";
+            elements.battleBtn.disabled = true;
+            addLogMessage("系统", "战斗开始！", "system");
+            battleLoop();
+        }
+
+        // 战斗循环
+        function battleLoop() {
+            if (!gameState.battleActive) return;
+            
+            let usedSkill = false;
+            
+            // 自动使用治疗术
+            if (Math.random() < 0.25 && gameState.healLevel > 0 && gameState.health < gameState.maxHealth * 0.5) {
+                if (gameState.mana >= 10) {
+                    gameState.mana -= 10;
+                    const healAmount = 50 + gameState.healLevel * 10;
+                    gameState.health = Math.min(gameState.maxHealth, gameState.health + healAmount);
+                    addLogMessage("玩家", `自动释放治疗术！恢复了${healAmount}点生命值！`, 'skill');
+                    usedSkill = true;
+                    updateStats();
+                }
+            }
+            
+            // 自动使用火球术
+            if (!usedSkill && Math.random() < 0.25 && gameState.fireballLevel > 0) {
+                if (gameState.mana >= 10) {
+                    gameState.mana -= 10;
+                    const fireballDamage = 20 + gameState.fireballLevel * 10;
+                    gameState.enemyHealth -= fireballDamage;
+                    addLogMessage("玩家", `自动释放火球术！对${gameState.enemyName}造成了${fireballDamage}点真实伤害！`, 'skill');
+                    usedSkill = true;
+                    updateEnemyHealth();
+                }
+            }
+            
+            // 普通攻击
+            if (!usedSkill) {
+                const playerAttack = gameState.baseAttack + (gameState.weapon ? gameState.weapon.attack : 0);
+                let playerDamage = Math.max(1, playerAttack - Math.floor(Math.random() * 3));
+                
+                if (Math.random() < 0.15) {
+                    playerDamage = Math.floor(playerDamage * 1.5);
+                    addLogMessage("玩家", `暴击！对${gameState.enemyName}造成了${playerDamage}点伤害！`, 'player');
+                } else {
+                    addLogMessage("玩家", `对${gameState.enemyName}造成了${playerDamage}点伤害！`, 'player');
+                }
+                
+                gameState.enemyHealth -= playerDamage;
+                updateEnemyHealth();
+            }
+            
+            // 检查敌人是否被击败
+            if (gameState.enemyHealth <= 0) {
+                defeatEnemy();
+                return;
+            }
+            
+            // 敌人反击
+            const playerDefense = gameState.baseDefense + (gameState.armor ? gameState.armor.defense : 0);
+            let enemyDamage = Math.max(1, gameState.enemyAttack + Math.floor(Math.random() * 5) - playerDefense);
+            
+            if (Math.random() < 0.15) {
+                enemyDamage = Math.floor(enemyDamage * 2);
+                addLogMessage(gameState.enemyName, `暴击！对你造成了${enemyDamage}点伤害！`, 'enemy');
+            } else {
+                addLogMessage(gameState.enemyName, `对你造成了${enemyDamage}点伤害！`, 'enemy');
+            }
+            
+            gameState.health -= enemyDamage;
+            updateStats();
+            
+            // 检查玩家是否死亡
+            if (gameState.health <= 0) {
+                gameState.health = 0;
+                updateStats();
+                playerDeath();
+                return;
+            }
+            
+            setTimeout(battleLoop, 1000);
+        }
+ function AutoEquip(item) {
+     if (gameState.inventory.length < gameState.maxInventorySize) {
+                    gameState.inventory.push(item);
+                    addLogMessage("系统", `获得了${item.name}！`, 'loot');
+                    // 自动装备更好的装备
+                    if (item.attack) {
+                        if (!gameState.weapon || item.attack > gameState.weapon.attack) {
+                            gameState.weapon = item;
+                            addLogMessage("系统", `自动装备了${item.name}！`, 'system');
+                        }
+                    } else if (item.defense) {
+                        if (!gameState.armor || item.defense > gameState.armor.defense) {
+                            gameState.armor = item;
+                            addLogMessage("系统", `自动装备了${item.name}！`, 'system');
+                        }
+                    } else if (item.manaBonus) {
+                        if (!gameState.accessory || item.manaBonus > gameState.accessory.manaBonus) {
+                            const oldAccessory = gameState.accessory;
+                            gameState.accessory = item;
+                            if (oldAccessory) {
+                                gameState.maxMana -= oldAccessory.manaBonus;
+                            }
+                            gameState.maxMana += item.manaBonus;
+                            gameState.mana = Math.min(gameState.mana, gameState.maxMana);
+                            addLogMessage("系统", `装备了${item.name}！魔法上限增加了${item.manaBonus}点！`, 'system');
+                        }
+                    }
+                } else {
+                    addLogMessage("系统", `背包已满，无法拾取${item.name}！`, 'system');
+                }
+                updateInventory();
+            }
+
+        // 击败敌人
+        function defeatEnemy() {
+            gameState.enemyHealth = 0;
+            updateEnemyHealth();
+            
+            const baseGold = 10 + gameState.currentLevel * 2;
+            const goldReward = baseGold + Math.floor(Math.random() * 20);
+            const baseExp = 15 + gameState.currentLevel * 3;
+            const expReward = Math.floor((baseExp + Math.floor(Math.random() * 10)) * 1.5);
+            
+            gameState.money += goldReward;
+            gameState.exp += expReward;
+            
+            addLogMessage("系统", `你击败了${gameState.enemyName}！`, 'system');
+            addLogMessage("系统", `获得${goldReward}金币和${expReward}经验值！`, 'money');
+            
+            // 随机掉落装备
+            if (Math.random() < 0.2) {
+                const dropTypes = ['weapon', 'armor', 'accessory'];
+                const dropType = dropTypes[Math.floor(Math.random() * dropTypes.length)];
+                
+                // 生成随机装备
+                const stats = generateRandomEquipmentStats(dropType, gameState.level);
+                const name = generateEquipmentName(dropType);
+                const item = {
+                    name: name,
+                    ...stats
+                };
+               AutoEquip(item);}
+            // 检查是否升级
+            if (gameState.exp >= gameState.maxExp) {
+                levelUp();
+            }
+            
+            gameState.defeatedEnemy = true;
+            gameState.battleActive = false;
+            elements.battleBtn.textContent = "战斗";
+            elements.battleBtn.disabled = false;
+            setTimeout(nextLevel, 500);
+            updateStats();
+        }
+        // 生成新敌人
+        function generateNewEnemy() {const enemyNames = ["哥布林战士", "骷髅士兵", "巨魔", "食人魔", "暗影刺客",
+  "火焰恶魔", "冰霜巨龙", "岩石巨人", "剧毒蜘蛛", "幽灵骑士",
+  "沼泽女巫", "雷霆元素", "暗夜吸血鬼", "熔岩兽", "寒冰女妖",
+  "堕落天使", "深渊触手", "沙暴蝎王", "森林树精", "诅咒木乃伊",
+  "机械傀儡", "暗影狼人", "瘟疫使者", "雷霆狮鹫", "深渊海妖"];
+            gameState.enemyName = enemyNames[Math.floor(Math.random() * enemyNames.length)];
+            gameState.enemyMaxHealth = Math.round(40 + gameState.currentLevel * 15 * Math.pow(1.1, gameState.currentLevel));
+            gameState.enemyHealth = gameState.enemyMaxHealth;
+            gameState.enemyAttack = Math.round(5 + gameState.currentLevel * 2 * Math.pow(1.08, gameState.currentLevel));
+            
+            elements.enemyName.textContent = gameState.enemyName;
+            updateEnemyHealth();
+            
+            addLogMessage("系统", `新的敌人出现了：${gameState.enemyName}！`, 'system');
+            addLogMessage("系统", `敌人生命值：${gameState.enemyMaxHealth}，攻击力：${gameState.enemyAttack}`, 'system');
+        }
+
+        // 玩家死亡
+        function playerDeath() {
+            gameState.battleActive = false;
+            elements.battleBtn.textContent = "战斗";
+            elements.battleBtn.disabled = false;
+            elements.reviveBtn.style.display = "block";
+            elements.merchantBtn.style.display = "none";
+            elements.inventoryBtn.style.display = "none";
+            elements.merchantPanel.style.display = "none";
+            elements.inventoryPanel.style.display = "none";
+            gameState.merchantOpen = false;
+            gameState.inventoryOpen = false;
+            addLogMessage("系统", "你被击败了！使用复活按钮重新开始冒险", 'system');
+        }
+
+        // 复活玩家
+        function revivePlayer() {
+            gameState.reviveCount++;
+            
+            // 随机损失金钱
+            const lossPercentage = 0.75 + Math.random() * 0.25;
+            const moneyLost = Math.floor(gameState.money * lossPercentage);
+            gameState.money -= moneyLost;
+            
+            // 重置关卡
+            gameState.currentLevel = 1;
+            
+            // 随机丢失装备
+            const itemsToDrop = Math.floor(Math.random() * 4);
+            let lostItems = [];
+            
+            for (let i = 0; i < itemsToDrop; i++) {
+                const dropType = Math.floor(Math.random() * 4);
+                let item = null;
+                
+                switch (dropType) {
+                    case 0: // 武器
+                        if (gameState.weapon) {
+                            item = gameState.weapon;
+                            const backpackIndex = gameState.inventory.findIndex(invItem => invItem.name === item.name);
+                            if (backpackIndex !== -1) {
+                                gameState.inventory.splice(backpackIndex, 1);
+                            }
+                            gameState.weapon = null;
+                            lostItems.push(item.name);
+                        }
+                        break;
+                    case 1: // 护甲
+                        if (gameState.armor) {
+                            item = gameState.armor;
+                            const backpackIndex = gameState.inventory.findIndex(invItem => invItem.name === item.name);
+                            if (backpackIndex !== -1) {
+                                gameState.inventory.splice(backpackIndex, 1);
+                            }
+                            gameState.armor = null;
+                            lostItems.push(item.name);
+                        }
+                        break;
+                    case 2: // 首饰
+                        if (gameState.accessory) {
+                            item = gameState.accessory;
+                            const backpackIndex = gameState.inventory.findIndex(invItem => invItem.name === item.name);
+                            if (backpackIndex !== -1) {
+                                gameState.inventory.splice(backpackIndex, 1);
+                            }
+                            gameState.maxMana -= item.manaBonus;
+                            gameState.accessory = null;
+                            lostItems.push(item.name);
+                        }
+                        break;
+                    case 3: // 背包物品
+                        if (gameState.inventory.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * gameState.inventory.length);
+                            item = gameState.inventory[randomIndex];
+                            
+                            // 检查是否装备了该物品
+                            if (gameState.weapon && gameState.weapon.name === item.name) {
+                                gameState.weapon = null;
+                            } else if (gameState.armor && gameState.armor.name === item.name) {
+                                gameState.armor = null;
+                            } else if (gameState.accessory && gameState.accessory.name === item.name) {
+                                gameState.maxMana -= item.manaBonus;
+                                gameState.accessory = null;
+                            }
+                            
+                            gameState.inventory.splice(randomIndex, 1);
+                            lostItems.push(item.name);
+                        }
+                        break;
+                }
+            }
+            
+            let message = `你复活了！损失了${moneyLost}金币`;
+            if (lostItems.length > 0) {
+                message += `和${lostItems.join(',')}`;
+            }
+            
+            // 恢复生命和魔法
+            gameState.health = gameState.maxHealth;
+            gameState.mana = gameState.maxMana;
+            
+            // 生成新敌人
+            generateNewEnemy();
+            gameState.defeatedEnemy = false;
+            
+            // 重置UI
+            elements.reviveBtn.style.display = "none";
+            elements.merchantBtn.style.display = "block";
+            elements.inventoryBtn.style.display = "block";
+            
+            // 重置跑商冷却
+            gameState.lastTradeTime = 0;
+            updateTradeCooldown();
+            
+            addLogMessage("系统", message, 'system');
+            updateStats();
+            updateInventory();
+        }
+
+        // 升级
+        function levelUp() {
+            gameState.level++;
+            gameState.exp -= gameState.maxExp;
+            gameState.maxExp = Math.floor(gameState.maxExp * 1.5);
+            gameState.maxHealth += 20;
+            gameState.health = gameState.maxHealth;
+            gameState.maxMana += 10;
+            gameState.mana = gameState.maxMana;
+            gameState.baseAttack += 3;
+            gameState.baseDefense += 2;
+            
+            addLogMessage("系统", `恭喜！你升到了${gameState.level}级！`, 'system');
+            updateStats();
+        }
+
+        // 下一关
+        function nextLevel() {
+            gameState.currentLevel++;
+            gameState.defeatedEnemy = false;
+            generateNewEnemy();
+            addLogMessage("系统", `进入第${gameState.currentLevel}关！敌人变得更加强大！`, 'system');
+            updateStats();
+        }
+
+        // 使用生命药水
+        function useHealthPotion() {
+            if (gameState.healthPotions > 0) {
+                gameState.health = Math.min(gameState.maxHealth, gameState.health + 50);
+                gameState.healthPotions--;
+                updateStats();
+                addLogMessage("玩家", "使用了生命药水，恢复了50点生命值", 'player');
+            } else {
+                addLogMessage("系统", "没有可用的生命药水！", 'system');
+            }
+        }
+
+        // 使用魔法药水
+        function useManaPotion() {
+            if (gameState.manaPotions > 0) {
+                gameState.mana = Math.min(gameState.maxMana, gameState.mana + 50);
+                gameState.manaPotions--;
+                updateStats();
+                addLogMessage("玩家", "使用了魔法药水，恢复了50点魔法值", 'player');
+            } else {
+                addLogMessage("系统", "没有可用的魔法药水！", 'system');
+            }
+        }
+
+        // 切换商人面板
+        function toggleMerchant() {
+            if (gameState.merchantOpen) {
+                elements.merchantPanel.style.display = "none";
+                gameState.merchantOpen = false;
+            } else {
+                elements.merchantPanel.style.display = "block";
+                gameState.merchantOpen = true;
+            }
+        }
+
+        // 切换背包面板
+        function toggleInventory() {
+            if (gameState.inventoryOpen) {
+                elements.inventoryPanel.style.display = "none";
+                gameState.inventoryOpen = false;
+            } else {
+                elements.inventoryPanel.style.display = "block";
+                gameState.inventoryOpen = true;
+            }
+        }
+
+        // 购买物品
+        function buyItem(item, price) {
+            if (gameState.money >= price) {
+                gameState.money -= price;
+                
+                switch (item) {
+                    case "health_potion":
+                        gameState.healthPotions++;
+                        addLogMessage("系统", "购买了1瓶生命药水", 'loot');
+                        break;
+                    case "mana_potion":
+                        gameState.manaPotions++;
+                        addLogMessage("系统", "购买了1瓶魔法药水", 'loot');
+                        break;
+                    case "fireball_scroll":
+                        gameState.fireballLevel++;
+                        addLogMessage("系统", "学习了火球术！", 'skill');
+                        break;
+                    case "heal_scroll":
+                        gameState.healLevel++;
+                        addLogMessage("系统", "学习了治疗术！", 'skill');
+                        break;
+                    case "random_equipment":
+                        buyRandomEquipment(price);
+                        break;
+                }
+                
+                updateStats();
+            } else {
+                addLogMessage("系统", "金币不足，无法购买！", 'system');
+            }
+        }
+
+        // 购买随机装备
+        function buyRandomEquipment(price) {
+            if (gameState.inventory.length >= gameState.maxInventorySize) {
+                addLogMessage("系统", "背包已满，无法购买新装备！", 'system');
+                return;
+            }
+            
+            const equipmentTypes = ['weapon', 'armor', 'accessory'];
+            const randomType = equipmentTypes[Math.floor(Math.random() * equipmentTypes.length)];
+            
+            // 生成随机装备
+            const stats = generateRandomEquipmentStats(randomType, gameState.level);
+            const name = generateEquipmentName(randomType);
+            
+            const item = {
+                name: name,
+                ...stats
+            };
+            addLogMessage("系统", `购买了随机装备：${item.name}！`, 'loot');
+            AutoEquip(item);
+        }
+
+        // 跑商
+        function trade() {
+            const currentTime = Date.now();
+            const timeSinceLastTrade = currentTime - gameState.lastTradeTime;
+            
+            if (timeSinceLastTrade < gameState.tradeCooldown) {
+                const remainingTime = gameState.tradeCooldown - timeSinceLastTrade;
+                const minutes = Math.floor(remainingTime / 60000);
+                const seconds = Math.floor((remainingTime % 60000) / 1000);
+                addLogMessage("系统", `跑商冷却中，还需等待${minutes}分${seconds}秒`, 'system');
+                return;
+            }
+            
+            const profit = 50 + Math.floor(Math.random() * 51);
+            gameState.money += profit;
+            gameState.lastTradeTime = currentTime;
+            
+            updateStats();
+            updateTradeCooldown();
+            addLogMessage("系统", `跑商成功！赚取了${profit}金币`, 'money');
+            
+            // 随机幸运事件
+            if (Math.random() < 0.3) {
+                const eventType = Math.floor(Math.random() * 3);
+                let eventMessage = "";
+                
+                switch (eventType) {
+                    case 0:
+                        const extraMoney = Math.floor(Math.random() * 30) + 10;
+                        gameState.money += extraMoney;
+                        elements.money.textContent = gameState.money;
+                        eventMessage = `幸运事件：获得了额外${extraMoney}金币！`;
+                        break;
+                    case 1:
+                        gameState.healthPotions++;
+                        elements.healthPotion.textContent = gameState.healthPotions;
+                        eventMessage = `幸运事件：获得了1瓶治疗药水！`;
+                        break;
+                    case 2:
+                        gameState.manaPotions++;
+                        elements.manaPotion.textContent = gameState.manaPotions;
+                        eventMessage = `幸运事件：获得了1瓶魔法药水！`;
+                        break;
+                }
+                
+                addLogMessage("系统", eventMessage, 'loot');
+            }
+        }
+
+        // 更新跑商冷却
+        function updateTradeCooldown() {
+            const currentTime = Date.now();
+            const timeSinceLastTrade = currentTime - gameState.lastTradeTime;
+            
+            if (timeSinceLastTrade < gameState.tradeCooldown) {
+                const remainingTime = gameState.tradeCooldown - timeSinceLastTrade;
+                const minutes = Math.floor(remainingTime / 60000);
+                const seconds = Math.floor((remainingTime % 60000) / 1000);
+                elements.tradeCooldownText.textContent = `冷却:${minutes}:${seconds.toString().padStart(2, '0')}`;
+                elements.tradeBtn.disabled = true;
+            } else {
+                elements.tradeCooldownText.textContent = "可以跑商";
+                elements.tradeBtn.disabled = false;
+            }
+        }
+
+        // 更新背包
+        function updateInventory() {
+            elements.inventory.innerHTML = '';
+            elements.inventoryCount.textContent = `${gameState.inventory.length}/${gameState.maxInventorySize}`;
+            
+            if (gameState.inventory.length >= gameState.maxInventorySize) {
+                elements.sellAllBtn.style.display = "block";
+            } else {
+                elements.sellAllBtn.style.display = "none";
+            }
+            
+            gameState.inventory.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'inventory-item';
+                
+                if (item.attack) {
+                    itemElement.classList.add('weapon');
+                } else if (item.defense) {
+                    itemElement.classList.add('armor');
+                } else if (item.manaBonus) {
+                    itemElement.classList.add('accessory');
+                }
+                
+                if ((gameState.weapon && gameState.weapon.name === item.name) || 
+                    (gameState.armor && gameState.armor.name === item.name) || 
+                    (gameState.accessory && gameState.accessory.name === item.name)) {
+                    itemElement.classList.add('equipped');
+                }
+                
+                let itemText = item.name;
+                if (item.attack) itemText += `(+${item.attack}攻)`;
+                if (item.defense) itemText += `(+${item.defense}防)`;
+                if (item.manaBonus) itemText += `(+${item.manaBonus}魔)`;
+                
+                itemElement.textContent = itemText;
+                
+                itemElement.addEventListener('click', () => {
+                    if (item.attack) {
+                        if (gameState.weapon === item) return;
+                        gameState.weapon = item;
+                    } else if (item.defense) {
+                        if (gameState.armor === item) return;
+                        gameState.armor = item;
+                    } else if (item.manaBonus) {
+                        if (gameState.accessory === item) return;
+                        const oldAccessory = gameState.accessory;
+                        gameState.accessory = item;
+                        if (oldAccessory) {
+                            gameState.maxMana -= oldAccessory.manaBonus;
+                        }
+                        gameState.maxMana += item.manaBonus;
+                        gameState.mana = Math.min(gameState.mana, gameState.maxMana);
+                    }
+                    
+                    updateStats();
+                    updateInventory();
+                });
+                
+                const sellBtn = document.createElement('div');
+                sellBtn.className = 'inventory-item-sell';
+                sellBtn.textContent = '×';
+                sellBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sellItem(index);
+                });
+                
+                itemElement.appendChild(sellBtn);
+                elements.inventory.appendChild(itemElement);
+            });
+        }
+
+        // 出售物品
+        function sellItem(index) {
+            const item = gameState.inventory[index];
+            
+            // 检查是否正在装备该物品
+            if ((gameState.weapon && gameState.weapon.name === item.name) || 
+                (gameState.armor && gameState.armor.name === item.name) || 
+                (gameState.accessory && gameState.accessory.name === item.name)) {
+                if (!confirm(`确定要出售正在装备的${item.name}吗？`)) {
+                    return;
+                }
+                
+                // 如果是首饰，还需要调整魔法上限
+                if (item.manaBonus && gameState.accessory && gameState.accessory.name === item.name) {
+                    gameState.maxMana -= item.manaBonus;
+                    gameState.accessory = null;
+                }
+            }
+            
+            const price = Math.floor(item.price * 0.5);
+            gameState.money += price;
+            gameState.inventory.splice(index, 1);
+            
+            addLogMessage("系统", `出售了${item.name}，获得${price}金钱！`, 'money');
+            updateStats();
+            updateInventory();
+        }
+
+        // 出售未使用物品
+        function sellUnusedItems() {
+            if (gameState.inventory.length === 0) {
+                addLogMessage("系统", "背包中没有可出售的物品！", 'system');
+                return;
+            }
+            
+            // 筛选未装备的物品
+            const unusedItems = gameState.inventory.filter(item => {
+                // 跳过已装备的物品
+                if ((gameState.weapon && gameState.weapon.name === item.name) || 
+                    (gameState.armor && gameState.armor.name === item.name) || 
+                    (gameState.accessory && gameState.accessory.name === item.name)) {
+                    return false;
+                }
+                return true; // 所有未装备的物品
+            });
+            
+            if (unusedItems.length === 0) {
+                addLogMessage("系统", "没有未装备的物品！", 'system');
+                return;
+            }
+            
+            let totalMoney = 0;
+            const soldItems = [];
+            
+            // 出售所有未装备物品
+            unusedItems.forEach(item => {
+                const index = gameState.inventory.findIndex(i => i === item);
+                if (index !== -1) {
+                    const price = Math.floor((item.price || 50) * 0.5); // 默认价格50金币
+                    totalMoney += price;
+                    soldItems.push(item.name);
+                    gameState.inventory.splice(index, 1);
+                }
+            });
+            
+            gameState.money += totalMoney;
+            updateStats();
+            updateInventory();
+            
+            if (soldItems.length > 0) {
+                addLogMessage("系统", `出售了未装备物品：${soldItems.join(', ')}`, 'money');
+                addLogMessage("系统", `共获得${totalMoney}金钱！`, 'money');
+            }
+        }
+
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', function() {
+            initUI();
+            
+            // 添加进度条动画
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                elements.progressBar.style.width = `${progress}%`;
+                if (progress >= 100) clearInterval(interval);
+            }, 50);
+        });
+    </script>
+</body>
+</html>

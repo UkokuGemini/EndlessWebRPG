@@ -1,0 +1,619 @@
+:root {
+    --primary: #9370DB;
+    --primary-dark: #7B68EE;
+    --secondary: #2ecc71;
+    --secondary-dark: #27ae60;
+    --danger: #e74c3c;
+    --danger-dark: #c0392b;
+    --warning: #f1c40f;
+    --warning-dark: #f39c12;
+    --info: #3498db;
+    --info-dark: #2980b9;
+    --dark: #222;
+    --darker: #1a1a2e;
+    --medium: #333;
+    --light: #444;
+    --lighter: #555;
+    --text: #eee;
+    --text-dim: #aaa;
+    --gold: #FFD700;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2c3e50, #1a1a2e);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.game-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 40px);
+    background-color: var(--darker);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: relative;
+}
+.game-header {
+    text-align: center;
+    margin-bottom: 5px;
+    position: relative;
+}
+.game-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    position: relative;
+    display: inline-block;
+    }
+.version {
+    position: absolute;
+    top: -5px;
+    right: -45px;
+    font-size: 14px;
+    background: rgba(255, 0, 34, 0.7);
+    padding: 2px 8px;
+    border-radius: 10px;
+    transform: rotate(15deg);
+        }
+.player-panel {
+    background-color: var(--medium);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.battle-panel {
+    background-color: var(--medium);
+    padding: 8px;
+    border-radius: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.stat-bar {
+    display: flex;
+    margin-bottom: 5px;
+    align-items: center;
+}
+.stat-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--text-dim);
+    min-width: 120px;
+}
+.stat-value {
+    flex: 1;
+    font-size: 14px;
+}
+.bar-container {
+    height: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--lighter);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.health-fill {
+    height: 100%;
+    background: linear-gradient(to right, #e74c3c, #c0392b);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+.mana-fill {
+    height: 100%;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+.exp-fill {
+    height: 100%;
+    background: linear-gradient(to right, #f1c40f, #f39c12);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+.stat-pair {
+    display: flex;
+    width: 48%;
+}
+.enemy-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background: var(--dark);
+    padding: 10px;
+    border-radius: 8px;
+}
+.enemy-name {
+    margin-right: 15px;
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--danger);
+}
+.enemy-health {
+    flex: 1;
+}
+.enemy-health-bar {
+    height: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--lighter);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.enemy-health-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--danger), var(--danger-dark));
+    width: 100%;
+    transition: width 0.3s ease;
+}
+.battle-log {
+    height: 120px;
+    background-color: var(--dark);
+    flex-grow:1;
+    min-height: 120px;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+.battle-message {
+    margin: 5px 0;
+    line-height: 1.4;
+    padding: 3px 5px;
+    border-radius: 3px;
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.player-message {
+    color: var(--secondary);
+    background-color: rgba(46, 204, 113, 0.1);
+}
+.enemy-message {
+    color: var(--danger);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+.system-message {
+    color: var(--info);
+    background-color: rgba(52, 152, 219, 0.1);
+}
+.loot-message {
+    color: var(--warning);
+    background-color: rgba(241, 196, 15, 0.1);
+}
+.money-message {
+    color: var(--gold);
+    background-color: rgba(155, 89, 182, 0.1);
+}
+.skill-message {
+    color: #e67e22;
+    background-color: rgba(230, 126, 34, 0.1);
+}
+.battle-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    margin-bottom: 10px;
+}
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 80px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+}
+button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+button:disabled {
+    background-color: var(--lighter);
+    color: var(--text-dim);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.battle-btn {
+    background: linear-gradient(to bottom, var(--danger), var(--danger-dark));
+    flex: 1.5;
+}
+.battle-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--danger-dark), var(--danger));
+}
+.heal-btn {
+    background: linear-gradient(to bottom, var(--secondary), var(--secondary-dark));
+    flex: 1;
+}
+.heal-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--secondary-dark), var(--secondary));
+}
+.mana-btn {
+    background: linear-gradient(to bottom, var(--info), var(--info-dark));
+    flex: 1;
+}
+.mana-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--info-dark), var(--info));
+}
+.next-level-btn {
+    background: linear-gradient(to bottom, var(--warning), var(--warning-dark));
+    color: #333;
+}
+.next-level-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--warning-dark), var(--warning));
+}
+.merchant-btn {
+    background: linear-gradient(to bottom, var(--info), var(--info-dark));
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+}
+.merchant-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--info-dark), var(--info));
+}
+.merchant-panel {
+    background-color: var(--dark);
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.merchant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 5px;
+    background: var(--medium);
+    border-radius: 6px;
+}
+.merchant-item-name {
+    flex: 1;
+}
+.merchant-item-price {
+    width: 80px;
+    text-align: right;
+    color: var(--warning);
+    font-weight: bold;
+    margin: 0 10px;
+}
+.merchant-item-btn {
+    width: 80px;
+    padding: 8px;
+    font-size: 14px;
+    background: linear-gradient(to bottom, var(--lighter), var(--light));
+    color: var(--text);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.merchant-item-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--light), var(--lighter));
+    transform: translateY(-2px);
+}
+.merchant-item-btn:disabled {
+    background: var(--lighter);
+    color: var(--text-dim);
+    cursor: not-allowed;
+}
+.cooldown-info {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 1px;
+    text-align: center;
+}
+.revive-btn {
+    background: linear-gradient(to bottom, var(--danger), var(--danger-dark));
+    margin-top: 15px;
+    padding: 12px;
+    width: 100%;
+}
+.revive-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--danger-dark), var(--danger));
+}
+.progress-bar {
+    height: 5px;
+    background: var(--primary);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+}
+.gold-stat {
+    color: var(--gold);
+    font-weight: bold;
+}
+.inventory {
+    margin-top: 15px;
+    background-color: var(--dark);
+    border-radius: 8px;
+    padding: 10px;
+}
+.inventory-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+}
+.inventory-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.inventory-item {
+    background-color: var(--lighter);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-width: 70px;
+    text-align: center;
+}
+.inventory-item:hover {
+    background-color: var(--light);
+    transform: translateY(-2px);
+}
+.inventory-item.equipped {
+    background: linear-gradient(to right, var(--primary), var(--primary-dark));
+    color: white;
+}
+.inventory-item.weapon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--danger);
+}
+.inventory-item.armor::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--info);
+}
+.inventory-item.accessory::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--primary);
+}
+.inventory-item.potion::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--secondary);
+}
+.inventory-item.scroll::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--warning);
+}
+.inventory-item-sell {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--danger);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.inventory-item:hover .inventory-item-sell {
+    opacity: 1;
+}
+.equipment-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    background-color: var(--dark);
+    padding: 8px;
+    border-radius: 6px;
+}
+.equipment-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32%;
+}
+.equipment-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+}
+.equipment-value {
+    font-size: 12px;
+    text-align: center;
+}
+.sell-all-btn {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+    margin-top: 10px;
+    padding: 8px;
+    width: 100%;
+    display: none;
+}
+.sell-all-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, #d35400, #e67e22);
+}
+.trade-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.trade-info {
+    display: flex;
+    align-items: center;
+}
+.trade-label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: var(--text-dim);
+}
+.cooldown-text {
+    color: var(--warning);
+    font-weight: bold;
+    margin-right: 10px;
+}
+.trade-btn {
+    width: 80px;
+    padding: 8px;
+    font-size: 14px;
+    background: linear-gradient(to bottom, var(--lighter), var(--light));
+    color: var(--text);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.trade-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--light), var(--lighter));
+}
+.trade-btn:disabled {
+    background: var(--lighter);
+    color: var(--text-dim);
+    cursor: not-allowed;
+}
+.inventory-btn {
+    background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+}
+.inventory-btn:hover:not(:disabled) {
+    background: linear-gradient(to bottom, var(--primary-dark), var(--primary));
+}
+.inventory-panel {
+    background-color: var(--dark);
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.level-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--warning);
+}
+.revive-count {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+@media (max-height: 700px) {
+    .stat-label,
+    .stat-value,
+    .enemy-name,
+    button {
+        font-size: 12px;
+    }
+    
+    .battle-message {
+        font-size: 12px;
+    }
+    
+    .bar-container,
+    .enemy-health-bar {
+        height: 12px;
+    }
+    
+    button {
+        padding: 8px 10px;
+        min-width: 70px;
+        font-size: 12px;
+    }
+    
+    .battle-log {
+        height: 100px;
+    }
+}
+@media (max-width: 480px) {
+    .game-container {
+        padding: 15px;
+    }
+    
+    .battle-controls {
+        flex-wrap: wrap;
+    }
+    
+    button {
+        min-width: 70px;
+        padding: 8px;
+        font-size: 12px;
+    }
+}
